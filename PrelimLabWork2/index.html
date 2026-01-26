@@ -1,32 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Prelim Lab Work 2</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prelim Lab Work 2</title>
+
+  <style>
+    /* ====== Theme ====== */
+    :root{
+      --bg1:#0b1020;
+      --bg2:#0f1b3a;
+      --card: rgba(255,255,255,.08);
+      --card-border: rgba(255,255,255,.14);
+      --text:#eaf0ff;
+      --muted: rgba(234,240,255,.75);
+      --accent:#7c5cff;
+      --accent2:#00d4ff;
+      --danger:#ff4d6d;
+      --success:#2ee59d;
+
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font: 500 16px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      display:grid;
+      place-items:center;
+      padding: 28px 16px;
+
+      /* Deep gradient + soft glow blobs */
+      background:
+        radial-gradient(1000px 600px at 20% 15%, rgba(124,92,255,.35), transparent 55%),
+        radial-gradient(900px 500px at 85% 75%, rgba(0,212,255,.22), transparent 55%),
+        radial-gradient(700px 500px at 40% 95%, rgba(46,229,157,.16), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    /* ====== Card ====== */
+    h2{
+      width:min(420px, 100%);
+      margin:0 0 14px;
+      font-size: 28px;
+      letter-spacing:.2px;
+      font-weight:800;
+      text-align:left;
+      text-shadow: 0 10px 30px rgba(0,0,0,.35);
+      position:relative;
+    }
+    h2::after{
+      content:"";
+      display:block;
+      width:72px;
+      height:4px;
+      margin-top:10px;
+      border-radius:99px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+    }
+
+    #loginForm{
+      width:min(420px, 100%);
+      padding: 22px 20px 18px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border:1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position:relative;
+      isolation:isolate;
+    }
+
+    #loginForm::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius: var(--radius);
+      padding:1px;
+      background: linear-gradient(135deg,
+        rgba(124,92,255,.65),
+        rgba(0,212,255,.40),
+        rgba(46,229,157,.25)
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+      z-index:-1;
+      opacity:.65;
+    }
+
+    /* ====== Fields ====== */
+    label{
+      display:block;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing:.3px;
+      margin-bottom: 12px;
+    }
+
+    input{
+      width:100%;
+      margin-top: 8px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(10,14,30,.55);
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .08s ease;
+    }
+
+    input::placeholder{ color: rgba(234,240,255,.45); }
+
+    input:focus{
+      border-color: rgba(124,92,255,.7);
+      box-shadow:
+        0 0 0 4px rgba(124,92,255,.18),
+        0 10px 30px rgba(0,0,0,.25);
+      transform: translateY(-1px);
+    }
+
+    /* Remove the <br><br> spacing effect; use clean layout spacing */
+    br{ display:none; }
+
+    /* ====== Button ====== */
+    button[type="submit"]{
+      width:100%;
+      margin-top: 8px;
+      padding: 12px 14px;
+      border: 0;
+      border-radius: 14px;
+      color: #0b1020;
+      font-weight: 800;
+      letter-spacing:.3px;
+      cursor:pointer;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow:
+        0 14px 30px rgba(124,92,255,.20),
+        0 10px 26px rgba(0,212,255,.12);
+      transition: transform .12s ease, filter .2s ease, box-shadow .2s ease;
+    }
+
+    button[type="submit"]:hover{
+      filter: brightness(1.06) saturate(1.05);
+      box-shadow:
+        0 18px 40px rgba(124,92,255,.25),
+        0 12px 28px rgba(0,212,255,.14);
+    }
+    button[type="submit"]:active{ transform: translateY(1px) scale(.99); }
+    button[type="submit"]:focus-visible{
+      outline: none;
+      box-shadow:
+        0 0 0 4px rgba(0,212,255,.18),
+        0 18px 40px rgba(124,92,255,.25);
+    }
+
+    /* ====== Messages ====== */
+    #message, #timestamp{
+      width:min(420px, 100%);
+      margin: 12px 0 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      box-shadow: 0 12px 30px rgba(0,0,0,.20);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* Optional: if your JS sets message content like "Success" / "Invalid"
+       you can toggle these classes in JS: message--success / message--error */
+    .message--success{ border-color: rgba(46,229,157,.35); color: rgba(234,240,255,.92); }
+    .message--error{ border-color: rgba(255,77,109,.40); color: rgba(234,240,255,.92); }
+
+    /* ====== Subtle entrance ====== */
+    @media (prefers-reduced-motion: no-preference){
+      h2, #loginForm, #message, #timestamp{
+        animation: rise .55s ease both;
+      }
+      #loginForm{ animation-delay:.06s; }
+      #message{ animation-delay:.12s; }
+      #timestamp{ animation-delay:.16s; }
+
+      @keyframes rise{
+        from{ opacity:0; transform: translateY(10px); }
+        to{ opacity:1; transform: translateY(0); }
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <h2>Login</h2>
 
-    <h2>Login</h2>
+  <form id="loginForm">
+    <label>
+      Username:
+      <input type="text" id="username" required placeholder="Enter your username" />
+    </label>
 
-    <form id="loginForm">
-        <label>
-            Username:
-            <input type="text" id="username" required>
-        </label>
-        <br><br>
+    <label>
+      Password:
+      <input type="password" id="password" required placeholder="Enter your password" />
+    </label>
 
-        <label>
-            Password:
-            <input type="password" id="password" required>
-        </label>
-        <br><br>
+    <button type="submit">Log In</button>
+  </form>
 
-        <button type="submit">Log In</button>
-    </form>
+  <p id="message"></p>
+  <p id="timestamp"></p>
 
-    <p id="message"></p>
-    <p id="timestamp"></p>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
